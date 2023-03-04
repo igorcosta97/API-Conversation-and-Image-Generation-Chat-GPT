@@ -20,11 +20,19 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
+interface bodyImage{
+  description: string
+}
+
+interface bodyChat{
+  question: string
+}
 
 app.post('/generateimage', async function (req: Request, res: Response ) {
   try{ 
+    const {description} = req.body as bodyImage; 
     const response = await openai.createImage({
-      prompt: req.body.description,
+      prompt: description,
       n: 1,
       size: "1024x1024",
     });
@@ -39,12 +47,11 @@ app.post('/generateimage', async function (req: Request, res: Response ) {
 
 
 app.post('/chat', async function (req: Request, res: Response ) {
-  console.log(req.body)
-  
   try{ 
+    const {question} = req.body as bodyChat; 
     const response = await openai.createCompletion({
     model: "text-davinci-003",
-    prompt:"A: " +  req.body.question + " \n B:",
+    prompt:"A: " +  question + " \n B:",
     temperature: 0,
     max_tokens: 1000,
     });
